@@ -1,0 +1,64 @@
+# General settings
+
+# for WandB logging
+project_name: "BCNN-SCP"
+experiment_name: "BCNN RBF(1, 1)"
+device: "cpu" # if gpu, then all available GPUs are used
+action: "train" # action can be "train" or "test" or "train and test"
+
+# Data settings
+data:
+  dataset: "MNIST"
+  num_classes: 10
+  batch_size: 32 # Batch size for training
+  val_batch_size: 64 # Batch size for validation/testing
+  num_workers: 0 # Number of data loader workers
+  input_size: [28, 28] # Image dimensions (height, width)
+  normalize_mean: 0.5 # Mean for normalization
+  normalize_std: 0.5 # Standard deviation for normalization
+  percent: 5
+
+# Model settings
+model:
+  model_name: "BCNN"
+  out_channels_conv1: 16 # Number of output channels for the first convolutional layer
+  out_channels_conv2: 32 # Number of output channels for the second convolutional layer
+  filter_size_conv1: 3 # Filter size for the first convolutional layer
+  filter_size_conv2: 3 # Filter size for the second convolutional layer
+  num_samples_training: 5 # Number of samples for training, null for mean weights
+  num_samples_predict: 30 # Number of samples for prediction, null for mean weights
+  prior_kernel:
+    name: "RBF" # Kernel name (e.g., RBF, Matern, RQ, Independent)
+    params:
+      a: 1
+      l: 1
+  kernel:
+    name: "RBF" # Kernel name (e.g., RBF, Matern, RQ, Independent)
+    params_init: # Interval for uniform initialization
+      a: [0.1, 0.3]
+      l: [0.1, 0.3]
+
+# Training settings
+training:
+  epochs: 10 # Number of training epochs
+  optimizer: "Adam" # Optimizer (e.g., Adam, SGD)
+  learning_rate: 0.001 # Learning rate
+  weight_decay: 0.0 # Weight decay (L2 regularization)
+  metrics: ["accuracy", "f1"]
+  # scheduler: # Learning rate scheduler settings
+  #   gamma: 0.1 # Gamma for StepLR
+
+# Validation settings
+validation:
+  metrics: ["accuracy", "ece", "f1"] # Validation metrics to log
+
+# Testing settings
+testing:
+  metrics: ["accuracy", "ece", "f1"] # Metrics for testing
+
+# Logging settings
+logging:
+  checkpoint_dir: "../checkpoints" # Directory to save model checkpoints
+  save_top_k: 1 # Number of best models to save
+  monitor_metric: "val_accuracy" # Metric to monitor for saving the best model
+  mode: "max" # "max" for maximizing the metric, "min" for minimizing
